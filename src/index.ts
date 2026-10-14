@@ -2,20 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import { MongoClient, ServerApiVersion } from 'mongodb';
 import 'dotenv/config';
-
-import {EmbedBuilder} from "discord.js";
-
-EmbedBuilder.prototype.noTitleField = function(value: string, inline: boolean = false) {
-	this.addFields({
-		name: '\u200B',
-		value: value,
-		inline: inline
-	});
-
-	return this;
-};
 
 const client = new Client({
 	intents: [
@@ -85,31 +72,4 @@ registerModerationHandlers(client);
 import { registerUserHandlers } from './events/userHandler.js';
 registerUserHandlers(client);
 
-if (!process.env.MONGODB_URI) {
-	throw new Error('MONGODB_URI is missing in environment variables.');
-}
-
-const mongoClient = new MongoClient(process.env.MONGODB_URI, {
-	serverApi: {
-		version: ServerApiVersion.v1,
-		strict: true,
-		deprecationErrors: true,
-	},
-});
-
-async function main() {
-	try {
-		await mongoClient.connect();
-		await mongoClient.db('admin').command({ ping: 1 });
-		console.log('Pinged your deployment. You successfully connected to MongoDB!');
-
-		client.mongo = mongoClient;
-
-		await client.login(process.env.TOKEN);
-	} catch (error) {
-		console.error('Failed to initialize bot:', error);
-		process.exit(1);
-	}
-}
-
-main();
+await client.login(process.env.TOKEN);
