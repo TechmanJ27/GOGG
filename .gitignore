@@ -1,0 +1,7 @@
+.idea
+/packs
+/node_modules
+dist/.env
+config.json
+dist/
+/database
